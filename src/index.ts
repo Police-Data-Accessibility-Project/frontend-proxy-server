@@ -15,7 +15,7 @@ import { logger, requestLogger, errorLogger, LoggedRequest } from './middleware/
 
 // Routes
 import donorBoxRouter from './routes/donor-box';
-import healthRouter from './routes/health-check';
+import healthRouter from './routes/health-check/route';
 
 const app = express();
 const port = config.PORT || 3000;
