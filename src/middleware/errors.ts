@@ -1,20 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 
-export interface ErrorWithStatus extends Error {
-  status?: number;
-}
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  // If headers have already been sent, delegate to Express's default error handler
+  if (res.headersSent) {
+    return next(err);
+  }
 
-export const errorHandler = (
-  err: ErrorWithStatus,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
+  // Send error response to client
+  res.status(res.statusCode || 500).json({
     error: {
-      message: err.message || 'Internal Server Error',
-      status: err.status || 500,
+      message: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
     },
   });
 };

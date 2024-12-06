@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { DonorBoxRequestBody } from './models';
 import config from '../../config';
 import axios from 'axios';
-import { ErrorWithStatus } from '../../middleware/errors';
 
 export async function post(
   req: Request<unknown, unknown, { path: string; params?: DonorBoxRequestBody }>,
@@ -34,10 +33,8 @@ export async function post(
 
     res.json(response.data);
   } catch (error) {
-    console.error(error);
     if (axios.isAxiosError(error)) {
-      const err: ErrorWithStatus = new Error(error.message);
-      err.status = error.response?.status || 500;
+      const err = new Error(error.message);
       next(err);
     } else {
       next(error);
