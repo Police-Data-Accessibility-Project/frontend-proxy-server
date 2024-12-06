@@ -11,17 +11,13 @@ export async function post(
   try {
     const authKey = config.DONOR_BOX_AUTH_ALIAS;
     const authValue = config.DONOR_BOX_AUTH_SECRET;
-    const path = req.body.path;
-    const params = req.body.params ?? {};
 
     if (!authKey || !authValue) {
-      throw new Error('Missing authentication credentials');
+      next(new Error('Missing authentication credentials'));
     }
 
-    if (!path) {
-      // TODO: replace with validation
-      throw new Error('Missing donorbox path');
-    }
+    const path = req.body?.path;
+    const params = req.body?.params ?? {};
 
     const response = await axios.get(`https://donorbox.org${path}`, {
       headers: {

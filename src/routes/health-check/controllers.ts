@@ -1,8 +1,6 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response } from 'express';
 
-const router = Router();
-
-router.get('/', (_req: Request, res: Response) => {
+export function get(_req: Request, res: Response) {
   const healthcheck = {
     uptime: process.uptime(),
     message: 'OK',
@@ -13,8 +11,6 @@ router.get('/', (_req: Request, res: Response) => {
     res.send(healthcheck);
   } catch {
     healthcheck.message = 'ERROR';
-    res.status(503).send();
+    res.status(503).send(new Error('Service Unavailable'));
   }
-});
-
-export default router;
+}
