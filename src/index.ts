@@ -15,9 +15,7 @@ import { logger, requestLogger, errorLogger, LoggedRequest } from './middleware/
 
 // Routes
 import donorBoxRouter from './routes/donor-box';
-import { corsOptions } from './middleware/cors';
-
-dotenv.config();
+import healthRouter from './routes/health-check';
 
 const app = express();
 const port = config.PORT || 3000;
@@ -35,6 +33,7 @@ app.use(errorLogger);
 app.use(errorHandler);
 
 // Routes
+app.use('/health', healthRouter);
 app.use('/donor-box', donorBoxRouter);
 
 app.listen(port, () => {
