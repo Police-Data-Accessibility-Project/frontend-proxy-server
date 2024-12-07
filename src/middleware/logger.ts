@@ -113,7 +113,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
         query: req.query,
         body: req.body,
         ip: req.ip,
-        userAgent: req.get('user-agent'),
         timestamp: new Date().toISOString(),
       });
     }
@@ -122,8 +121,11 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       type: REQUEST_LOG_TYPE.REQUEST_END,
       requestId: (req as LoggedRequest).id,
       method: req.method,
-      path: req.path,
+      path: req.originalUrl || req.url,
       statusCode: res.statusCode,
+      // query: req.query,
+      // body: req.body,
+      // ip: req.ip,
       timestamp: new Date().toISOString(),
     });
   });
