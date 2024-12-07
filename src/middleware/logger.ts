@@ -110,9 +110,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
         method: req.method,
         path: req.originalUrl || req.url,
         statusCode: res.statusCode,
-        query: req.query,
-        body: req.body,
-        ip: req.ip,
         timestamp: new Date().toISOString(),
       });
     }
@@ -123,9 +120,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       method: req.method,
       path: req.originalUrl || req.url,
       statusCode: res.statusCode,
-      // query: req.query,
-      // body: req.body,
-      // ip: req.ip,
       timestamp: new Date().toISOString(),
     });
   });
