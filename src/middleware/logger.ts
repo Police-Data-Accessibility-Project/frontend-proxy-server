@@ -2,10 +2,36 @@ import { NextFunction, Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuid } from 'uuid';
 import { AxiosError } from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 export type LoggedRequest = Request & {
   id: string;
 };
+
+interface HttpError extends Error {
+  status?: number;
+}
+
+enum REQUEST_LOG_TYPE {
+  REQUEST_START = 'REQUEST_START',
+  REQUEST_END = 'REQUEST_END',
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS',
+}
+
+const logDir = path.join(process.cwd(), '.logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
+// Add custom colors (optional)
+winston.addColors({
+  info: 'cyan',
+  ok: 'green',
+  error: 'red',
+  warn: 'yellow',
+});
 
 const alignColorsAndTime = winston.format.combine(
   winston.format.colorize({
@@ -24,9 +50,10 @@ const alignColorsAndTime = winston.format.combine(
 
 export const logger = winston.createLogger({
   levels: {
-    info: 0,
-    ok: 1,
-    error: 2,
+    error: 0,
+    warn: 1,
+    ok: 2,
+    info: 3,
   },
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   transports: [
@@ -41,52 +68,27 @@ export const logger = winston.createLogger({
     }),
     // Console transport with colors
     new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
+      format: winston.format.combine(
+        winston.format.json(),
+        winston.format.colorize(),
+        alignColorsAndTime
+      ),
     }),
-
-    // new winston.transports.Console({
-    //   level: 'info',
-    //   stderrLevels: ['error'],
-    //   format: winston.format.combine(
-    //     winston.format.timestamp(),
-    //     winston.format.colorize({
-    //       all: true,
-    //       colors: {
-    //         info: 'blue',
-    //         ok: 'green',
-    //         error: 'red',
-    //       },
-    //     }),
-    //     winston.format.printf(({ level, message, timestamp, ...metadata }) => {
-    //       let msg = `${timestamp} ${level}: ${message}`;
-
-    //       if (Object.keys(metadata).length > 0) {
-    //         msg += '\n' + JSON.stringify(metadata, null, 2);
-    //       }
-
-    //       return msg;
-    //     })
-    //   ),
-    // }),
   ],
-});
-
-// Add custom colors (optional)
-winston.addColors({
-  info: 'green',
-  ok: 'green',
-  error: 'red',
 });
 
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   // Add request ID for tracking requests across logs
   const requestId = uuid();
-  (req as LoggedRequest).id = requestId;
+
+  if (!(req as LoggedRequest).id) {
+    (req as LoggedRequest).id = requestId;
+  }
 
   // Log at start of request
   logger.info({
-    type: 'REQUEST_START',
-    requestId,
+    type: REQUEST_LOG_TYPE.REQUEST_START,
+    requestId: (req as LoggedRequest).id,
     method: req.method,
     path: req.path,
     query: req.query,
@@ -98,9 +100,27 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
   // Log when request completes or errors
   res.on('finish', () => {
+    if (res.statusCode < 400) {
+      logger.log({
+        level: 'ok',
+        message: `Request ${(req as LoggedRequest)?.id} to ${req.originalUrl} successful`,
+
+        type: REQUEST_LOG_TYPE.SUCCESS,
+        requestId: (req as LoggedRequest).id,
+        method: req.method,
+        path: req.originalUrl || req.url,
+        statusCode: res.statusCode,
+        query: req.query,
+        body: req.body,
+        ip: req.ip,
+        userAgent: req.get('user-agent'),
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     logger.info({
-      type: 'REQUEST_END',
-      requestId,
+      type: REQUEST_LOG_TYPE.REQUEST_END,
+      requestId: (req as LoggedRequest).id,
       method: req.method,
       path: req.path,
       statusCode: res.statusCode,
@@ -113,13 +133,12 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
 // Error logging middleware - place this last in your middleware chain
 export const errorLogger = (
-  error: Error | AxiosError,
+  error: HttpError | AxiosError,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   // Set default status code if not set
-  // @ts-expect-error - a
   const statusCode = error.status ?? 500;
 
   // Ensure status is set before logging
@@ -127,7 +146,7 @@ export const errorLogger = (
 
   try {
     logger.error({
-      type: 'ERROR',
+      type: REQUEST_LOG_TYPE.ERROR,
       requestId: (req as LoggedRequest).id,
       method: req.method,
       path: req.originalUrl || req.url,
@@ -149,4 +168,9 @@ export const errorLogger = (
 
   // Pass to error handler
   next(error);
+};
+
+export const addRequestId = (req: Request, _res: Response, next: NextFunction) => {
+  (req as LoggedRequest).id = uuid();
+  next();
 };

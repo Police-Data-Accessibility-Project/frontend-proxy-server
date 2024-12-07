@@ -11,6 +11,6 @@ export function get(_req: Request, res: Response) {
     res.send(healthcheck);
   } catch {
     healthcheck.message = 'ERROR';
-    res.status(503).send(new Error('Service Unavailable'));
+    res.status(503).send(healthcheck);
   }
 }

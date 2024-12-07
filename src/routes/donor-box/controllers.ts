@@ -29,11 +29,6 @@ export async function post(
 
     res.json(response.data);
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const err = new Error(error.message);
-      next(err);
-    } else {
-      next(error);
-    }
+    next(error);
   }
 }

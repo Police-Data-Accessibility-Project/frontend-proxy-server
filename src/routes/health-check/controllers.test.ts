@@ -45,6 +45,10 @@ describe('Health Check Controller', () => {
     get(mockRequest as Request, mockResponse as Response);
 
     expect(mockResponse.status).toHaveBeenCalledWith(503);
-    expect(mockResponse.send).toHaveBeenLastCalledWith(new Error('Service Unavailable'));
+    expect(mockResponse.send).toHaveBeenLastCalledWith({
+      uptime: 100,
+      message: 'ERROR',
+      timestamp: mockDate,
+    });
   });
 });
