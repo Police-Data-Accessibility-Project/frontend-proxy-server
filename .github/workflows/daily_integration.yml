@@ -3,11 +3,7 @@ on:
   schedule:
     # Runs at 00:00 EST (05:00 UTC)
     - cron: '0 5 * * *'
-  
-  # For now - remove after testing
-  push:
-    branches: [ main ]
-  
+    
 jobs:
   api-tests:
     name: Integration tests
