@@ -45,11 +45,11 @@ jobs:
       - name: Run integration tests
         run: npm run test:integration
 
-      - name: Check health endpoint
-        run: |
-          HEALTH_RESPONSE=$(curl -s http://localhost:3000/health)
-          echo "Health check response:"
-          echo $HEALTH_RESPONSE
+      # - name: Check health endpoint
+      #   run: |
+      #     HEALTH_RESPONSE=$(curl -s TODO_ENV_VAR/3000/health)
+      #     echo "Health check response:"
+      #     echo $HEALTH_RESPONSE
 
       # - name: Update GitHub Gist with test results
       #   env:
