@@ -1,11 +1,8 @@
 import { Router } from 'express';
 import { donorBox as donorBoxRateLimiter } from './middleware';
-import { post } from './controllers';
-import { validateRequest } from '../../middleware/validate-request';
-import { donorBoxSchema } from './models';
+import { get } from './controllers';
 
 const router = Router();
 
-router.post('/', donorBoxRateLimiter, validateRequest(donorBoxSchema), post);
-
+router.get('/*', donorBoxRateLimiter, get);
 export default router;

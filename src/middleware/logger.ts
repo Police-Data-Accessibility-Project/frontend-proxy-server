@@ -32,13 +32,12 @@ winston.addColors({
   error: 'red',
   warn: 'yellow',
 });
-
 const alignColorsAndTime = winston.format.combine(
   winston.format.colorize({
     all: true,
   }),
   winston.format.label({
-    label: `[${winston.level.toUpperCase()}]`,
+    label: '[LOGGER]', // Use a static label instead
   }),
   winston.format.timestamp({
     format: 'YY-MM-DD HH:mm:ss',

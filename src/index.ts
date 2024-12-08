@@ -18,7 +18,7 @@ import donorBoxRouter from './routes/donor-box';
 import healthRouter from './routes/health-check';
 
 const app = express();
-const port = config.PORT || 3000;
+const port = config.PORT;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(rateLimiter);
@@ -37,3 +37,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   logger.info(`Server running on port ${port}`);
 });
+
+export default app;

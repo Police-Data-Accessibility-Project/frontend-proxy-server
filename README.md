@@ -4,10 +4,10 @@ This repository holds a simple node server that proxies external APIs for use in
 
 
 ## Available routes
-| path        | description                                    | methods | body                                               | params | auth |
-| ----------- | ---------------------------------------------- | ------- | -------------------------------------------------- | ------ | ---- |
-| `donor-box` | Proxy for the DonorBox API within the PDAP org | `POST`  | `{ path: string; params?: Record<string, string>}` | n/a    | n/a  |
-| `health`    | Health check for the API                       | `GET`   | n/a                                                | n/a    | n/a  |
+| path                             | description                                    | methods | body | params           | auth |
+| -------------------------------- | ---------------------------------------------- | ------- | ---- | ---------------- | ---- |
+| `/donor-box<donor-box-api-path>` | Proxy for the DonorBox API within the PDAP org | `GET`   | n/a  | donor box params | n/a  |
+| `/health`                        | Health check for the API                       | `GET`   | n/a  | n/a              | n/a  |
 
 
 ## Getting started

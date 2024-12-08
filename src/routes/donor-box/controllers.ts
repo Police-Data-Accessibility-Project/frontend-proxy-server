@@ -1,30 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
-import { DonorBoxRequestBody } from './models';
 import config from '../../config';
 import axios from 'axios';
 
-export async function post(
-  req: Request<unknown, unknown, { path: string; params?: DonorBoxRequestBody }>,
-  res: Response,
-  next: NextFunction
-) {
+export async function get(req: Request, res: Response, next: NextFunction) {
   try {
     const authKey = config.DONOR_BOX_AUTH_ALIAS;
     const authValue = config.DONOR_BOX_AUTH_SECRET;
 
     if (!authKey || !authValue) {
-      next(new Error('Missing authentication credentials'));
+      return next(new Error('Missing authentication credentials'));
     }
 
-    const path = req.body?.path;
-    const params = req.body?.params ?? {};
+    // Get everything after /donor-box in the original request path
+    const donorBoxPath = req.path.replace(/^\/donor-box/, '');
 
-    const response = await axios.get(`https://donorbox.org${path}`, {
+    const response = await axios.get(`https://donorbox.org${donorBoxPath}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Basic ${btoa(`${authKey}:${authValue}`)}`,
       },
-      params,
+      params: req.query, // Pass through any query parameters
     });
 
     res.json(response.data);
