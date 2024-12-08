@@ -1,5 +1,5 @@
 # Specific files
-dist/*
+dist/**/*
 coverage/*
 node_modules/*
 *.test.ts
