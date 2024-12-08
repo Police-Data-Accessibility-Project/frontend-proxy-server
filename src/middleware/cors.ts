@@ -1,6 +1,6 @@
 import config from '../config';
 
-export const allowedOrigins = config.ALLOWED_ORIGINS.split(',');
+export const allowedOrigins = (config.ALLOWED_ORIGINS ?? '*').split(',');
 
 export const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
