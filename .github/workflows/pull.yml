@@ -3,6 +3,7 @@ name: Pull
 on:
   pull_request:
     branches: [ main, dev ]
+
 jobs:
   pull:
     name: lint, test, build
@@ -11,6 +12,11 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
+    
+    env:
+      DONOR_BOX_AUTH_ALIAS: ${{ secrets.DONOR_BOX_AUTH_ALIAS }}
+      DONOR_BOX_AUTH_SECRET: ${{ secrets.DONOR_BOX_AUTH_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
 
     steps:
       - name: Checkout repository
