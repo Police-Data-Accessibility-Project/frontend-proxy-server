@@ -104,11 +104,9 @@ jobs:
     needs: install
     name: Integration Tests
     runs-on: ubuntu-latest
-    # Add any environment variables needed for integration tests
     env:
       DONOR_BOX_AUTH_ALIAS: ${{ secrets.DONOR_BOX_AUTH_ALIAS }}
       DONOR_BOX_AUTH_SECRET: ${{ secrets.DONOR_BOX_AUTH_SECRET }}
-      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
 
     steps:
       - uses: actions/checkout@v4
