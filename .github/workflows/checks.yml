@@ -1,7 +1,12 @@
-name: Push
+name: Checks
+
 on:
   push:
+    branches: '*'
+  
+  pull_request:
     branches: [ main, dev ]
+  
 
 jobs:
   install:
@@ -26,9 +31,33 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
+  build:
+    needs: install
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      # Restore cached dependencies
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Build
+        run: npm run build
+        
+        
+
   lint:
     needs: install
-    name: Unit Tests
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
