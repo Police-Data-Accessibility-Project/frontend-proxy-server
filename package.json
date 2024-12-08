@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "node dist/index.js",
-    "test": "jest --config ./jest.config.cjs",
+    "test": "jest --config",
     "test:unit": "jest --config ./jest.config.unit.cjs",
     "test:integration": "jest --config ./jest.config.integration.cjs",
     "coverage": "jest --coverage"
