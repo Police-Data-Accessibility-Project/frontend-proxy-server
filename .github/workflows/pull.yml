@@ -3,6 +3,8 @@ name: Pull
 on:
   pull_request:
     branches: [ main, dev ]
+  push:
+    branches: [ main ]
 
 jobs:
   pull:

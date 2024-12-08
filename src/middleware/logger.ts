@@ -38,14 +38,12 @@ const alignColorsAndTime = winston.format.combine(
     all: true,
   }),
   winston.format.label({
-    label: '[LOGGER]',
+    label: `[${winston.level.toUpperCase()}]`,
   }),
   winston.format.timestamp({
     format: 'YY-MM-DD HH:mm:ss',
   }),
-  winston.format.printf(
-    (info) => `\n${info.label} ${info.timestamp} \n${info.level} : ${info.message}\n`
-  )
+  winston.format.printf((info) => `\n${info.label} ${info.timestamp}\n${info.message}\n`)
 );
 
 export const logger = winston.createLogger({
@@ -69,8 +67,8 @@ export const logger = winston.createLogger({
     // Console transport with colors
     new winston.transports.Console({
       format: winston.format.combine(
-        winston.format.json(),
         winston.format.colorize(),
+        winston.format.json(),
         alignColorsAndTime
       ),
     }),

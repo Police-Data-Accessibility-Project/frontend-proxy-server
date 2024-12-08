@@ -10,6 +10,6 @@
     "rootDir": "./src",
     "declaration": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "__mocks__/__mocks__"],
   "exclude": ["node_modules"]
 }
