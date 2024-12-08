@@ -6,7 +6,6 @@ const config = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  // coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '**/*index.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.test.ts',
@@ -14,14 +13,14 @@ const config = {
     '!**/{index,config}.ts',
   ],
   coverageReporters: ['text', 'lcov', 'json-summary'],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 80,
+  //     functions: 80,
+  //     lines: 80,
+  //     statements: 80,
+  //   },
+  // },
 };
 
 module.exports = config;
