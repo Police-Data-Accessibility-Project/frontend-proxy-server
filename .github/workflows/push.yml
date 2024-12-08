@@ -6,12 +6,20 @@ on:
 
 jobs:
   pull:
-    name: build
+    name: lint, test, build
     runs-on: ubuntu-latest
     
     strategy:
       matrix:
         node-version: [20.x]
+    
+    env:
+      DONOR_BOX_AUTH_ALIAS: ${{ secrets.DONOR_BOX_AUTH_ALIAS }}
+      DONOR_BOX_AUTH_SECRET: ${{ secrets.DONOR_BOX_AUTH_SECRET }}
+      # PORT=3000
+      # NODE_ENV=development
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+  
 
     steps:
       - name: Checkout repository
