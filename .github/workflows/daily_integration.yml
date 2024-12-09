@@ -1,0 +1,67 @@
+name: Daily API Integration Tests
+on:
+  schedule:
+    # Runs at 00:00 EST (05:00 UTC)
+    - cron: '0 5 * * *'
+    
+jobs:
+  api-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    env:
+      DONOR_BOX_AUTH_ALIAS: ${{ secrets.DONOR_BOX_AUTH_ALIAS }}
+      DONOR_BOX_AUTH_SECRET: ${{ secrets.DONOR_BOX_AUTH_SECRET }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+
+      - name: Install dependencies
+        run: npm ci
+
+      # - name: Run integration tests
+      #   run: |
+      #     npm run test:integration > test-results.log 2>&1
+      #     echo "::group::Test Results"
+      #     cat test-results.log
+      #     echo "::endgroup::"
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      # - name: Check health endpoint
+      #   run: |
+      #     HEALTH_RESPONSE=$(curl -s TODO_ENV_VAR/3000/health)
+      #     echo "Health check response:"
+      #     echo $HEALTH_RESPONSE
+
+      # - name: Update GitHub Gist with test results
+      #   env:
+      #     GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+      #     GIST_ID: ${{ secrets.GIST_ID }}
+      #   run: |
+      #     DATE=$(date '+%Y-%m-%d')
+      #     CONTENT=$(cat test-results.log)
+      #     curl -X PATCH \
+      #       -H "Authorization: token $GIST_TOKEN" \
+      #       -H "Content-Type: application/json" \
+      #       https://api.github.com/gists/$GIST_ID \
+      #       -d "{
+      #         \"files\": {
+      #           \"proxy-api-test-results-${DATE}.log\": {
+      #             \"content\": $(echo "$CONTENT" | jq -Rs .)
+      #           }
+      #         }
+      #       }"
