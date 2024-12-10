@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import config from '../../config';
 import axios from 'axios';
+import { logger } from '../../middleware/logger';
 
 export async function get(req: Request, res: Response, next: NextFunction) {
   try {
@@ -21,9 +22,15 @@ export async function get(req: Request, res: Response, next: NextFunction) {
       },
       params: req.query, // Pass through any query parameters
     });
-
+    logger.info({
+      response,
+      env: response.config.env,
+      header: `Basic ${btoa(`${authKey}:${authValue}`)}`,
+    });
     res.json(response.data);
   } catch (error) {
+    logger.error(error);
+    console.error(error);
     next(error);
   }
 }
