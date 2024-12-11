@@ -10,6 +10,4 @@ const config = {
   // HOST: process.env.HOST || 'localhost',
 };
 
-console.log('config', config);
-
 export default config;
