@@ -15,12 +15,13 @@ import { logger, requestLogger, errorLogger, addRequestId } from './middleware/l
 
 // Routes
 import donorBoxRouter from './routes/donor-box';
-import healthRouter from './routes/health-check';
+import healthRouter from './routes/health';
 
 const app = express();
 const port = config.PORT;
 
-app.use(express.urlencoded({ extended: true }));
+// app.set('trust proxy', 1);
+// app.use(express.urlencoded({ extended: true }));
 app.use(rateLimiter);
 app.use(cors(corsOptions));
 app.use(express.json());

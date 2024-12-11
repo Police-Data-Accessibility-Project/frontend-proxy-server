@@ -1,7 +1,7 @@
 import rateLimit from 'express-rate-limit';
 
 export const donorBox = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000 * 5, // 5 minutees
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,

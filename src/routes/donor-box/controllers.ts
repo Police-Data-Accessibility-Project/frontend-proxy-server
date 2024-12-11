@@ -21,7 +21,6 @@ export async function get(req: Request, res: Response, next: NextFunction) {
       },
       params: req.query, // Pass through any query parameters
     });
-
     res.json(response.data);
   } catch (error) {
     next(error);
