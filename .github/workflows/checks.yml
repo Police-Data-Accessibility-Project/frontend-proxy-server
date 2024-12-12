@@ -1,0 +1,127 @@
+name: Checks
+
+on:
+  push:
+    branches: '*'
+  
+  pull_request:
+    branches: [ main, dev ]
+  
+
+jobs:
+  install:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      # Cache dependencies for other jobs
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+  build:
+    needs: install
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      # Restore cached dependencies
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Build
+        run: npm run build
+        
+        
+
+  lint:
+    needs: install
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      # Restore cached dependencies
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Lint
+        run: npm run lint
+
+  unit-tests:
+    needs: install
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      # Restore cached dependencies
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Run unit tests
+        run: npm run test:unit
+    
+
+  integration-tests:
+    needs: install
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    env:
+      DONOR_BOX_AUTH_ALIAS: ${{ secrets.DONOR_BOX_AUTH_ALIAS }}
+      DONOR_BOX_AUTH_SECRET: ${{ secrets.DONOR_BOX_AUTH_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      # Restore cached dependencies
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Run integration tests
+        run: npm run test:integration
